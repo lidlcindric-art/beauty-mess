@@ -322,3 +322,24 @@ body.cur-hover .cursor-ring { width: 54px; height: 54px; border-color: rgba(201,
   .md\:inline-flex { display: none !important; }
   .md\:flex { display: none !important; }
 }
+
+/* ── HERO IMAGE mobile fix ────────────── */
+@media (max-width: 767px) {
+  .hero-img-wrap {
+    left: 0 !important;          /* full width on mobile */
+    right: 0 !important;
+  }
+  .hero-img-wrap img {
+    object-position: 65% 15% !important;  /* focus on hair/face */
+  }
+  .hero-grad-left {
+    width: 100% !important;      /* dark overlay across full width */
+    background: linear-gradient(
+      to right,
+      rgba(21,2,24,.85) 0%,
+      rgba(21,2,24,.6) 50%,
+      rgba(21,2,24,.35) 100%
+    ) !important;
+  }
+}
+

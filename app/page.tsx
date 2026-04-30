@@ -299,30 +299,30 @@ export default function FensiPage() {
         {/* woman-hero.png — exact template positioning:
             width: 961.95px in 1254px = 76.7%, left: 146px = 11.6%
             Full height, centered cover, no filter (PNG preserves look) */}
-        <div style={{
+        <div className="hero-img-wrap" style={{
           position:'absolute',
           top:0, bottom:0,
-          left:'11.6%',         /* template: 146px / 1254px */
-          right:0,              /* extends to right edge */
+          left:'11.6%',
+          right:0,
           zIndex:0,
         }}>
           <Image
             src="/photos/woman-hero.png"
             alt="Fensi Salon"
             fill
-            style={{objectFit:'cover', objectPosition:'50% 50%'}}
+            style={{objectFit:'cover', objectPosition:'60% 20%'}}
             priority
-            sizes="88vw"
+            sizes="(max-width:767px) 100vw, 88vw"
           />
         </div>
 
-        {/* GRADIENTS — template exact:
-            - Bottom: transparent→solid (template: 297px of 891px ≈ 33% from bottom)
-            - Left 33%: solid→transparent (matches template sr7-shp left overlay) */}
-        <div style={{position:'absolute',bottom:0,left:0,right:0,height:'33%',zIndex:1,
+        {/* GRADIENTS */}
+        {/* Bottom: transparent → solid */}
+        <div style={{position:'absolute',bottom:0,left:0,right:0,height:'45%',zIndex:1,
           background:'linear-gradient(rgba(21,2,24,0) 0%, rgba(21,2,24,1) 100%)',pointerEvents:'none'}}/>
-        <div style={{position:'absolute',bottom:0,left:0,right:0,height:'33%',zIndex:1,
-          background:'linear-gradient(rgba(21,2,24,0) 0%, rgba(21,2,24,1) 100%)',pointerEvents:'none'}}/>
+        {/* Left: solid → transparent — covers text area */}
+        <div className="hero-grad-left" style={{position:'absolute',top:0,left:0,bottom:0,width:'55%',zIndex:1,
+          background:'linear-gradient(to right, rgba(21,2,24,.9) 0%, rgba(21,2,24,.5) 55%, rgba(21,2,24,0) 100%)',pointerEvents:'none'}}/>
 
         {/* PARTICLE WAVE — SR7 tp-particlewave recreation, z-index:2 like template */}
         <ParticleWave />
