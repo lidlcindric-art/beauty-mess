@@ -230,3 +230,95 @@ body.cur-hover .cursor-ring { width: 54px; height: 54px; border-color: rgba(201,
 @keyframes fabFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 .spin { width: 14px; height: 14px; border: 1.5px solid rgba(21,2,24,.2); border-top-color: var(--plum); border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; vertical-align: middle; margin-right: .4rem; }
+
+/* ═══════════════════════════════════════════
+   MOBILE — max 767px
+═══════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+  /* ── HERO ─────────────────────────────── */
+  .hero-bottom-grid {
+    grid-template-columns: 1fr !important;
+    padding: 0 5% 10% !important;
+    gap: 1.5rem !important;
+  }
+  .hero-right-col {
+    text-align: left !important;
+    align-items: flex-start !important;
+  }
+
+  /* ── ABOUT ────────────────────────────── */
+  .about-grid {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+  }
+  .about-grid > div:first-child {
+    padding-right: 0 !important;
+  }
+  .about-right-img {
+    min-height: 320px !important;
+  }
+  #osalonu {
+    padding: 4rem 5% !important;
+  }
+
+  /* ── SERVICES ─────────────────────────── */
+  .srv-slide { min-height: 70vh !important; }
+  .mobile-srv { padding: 0 5% 15% !important; }
+  .srv-title-inner { font-size: clamp(2.5rem,14vw,5rem) !important; }
+
+  /* ── GALLERY ──────────────────────────── */
+  .gal-card {
+    width: clamp(260px,82vw,400px) !important;
+    height: clamp(340px,65vw,480px) !important;
+  }
+  /* Always show text on mobile (no hover) */
+  .gal-title-inner,
+  .gal-price-inner,
+  .gal-cta-inner {
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  /* ── TESTIMONIALS ─────────────────────── */
+  .testi-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .testi-photo {
+    height: 260px !important;
+  }
+
+  /* ── BOOKING ──────────────────────────── */
+  .booking-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── SECTIONS general ─────────────────── */
+  .section-pad { padding: 4rem 5% !important; }
+}
+
+/* ── TABLET — 768px–1023px ─────────────── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-bottom-grid {
+    grid-template-columns: 60% 40% !important;
+  }
+  .testi-grid {
+    grid-template-columns: 45% 55% !important;
+  }
+  .booking-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* ── md:flex + md:inline-flex helpers ──── */
+@media (min-width: 768px) {
+  .hidden { display: none !important; }
+  .md\:inline-flex { display: inline-flex !important; }
+  .md\:flex { display: flex !important; }
+  .md\:grid-cols-2 { grid-template-columns: 1fr 1fr !important; }
+}
+@media (max-width: 767px) {
+  .md\:inline-flex { display: none !important; }
+  .md\:flex { display: none !important; }
+}

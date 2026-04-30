@@ -375,7 +375,7 @@ export default function FensiPage() {
         )}
 
         {/* BOTTOM CONTENT — two-column like template (66.67% left, 33.33% right) */}
-        <div style={{position:'absolute',bottom:0,left:0,right:0,zIndex:2,padding:'0 5% 5% 5%',display:'grid',gridTemplateColumns:'66.667% 33.333%',alignItems:'flex-end',gap:0}}>
+        <div className='hero-bottom-grid' style={{position:'absolute',bottom:0,left:0,right:0,zIndex:2,padding:'0 5% 5% 5%',display:'grid',gridTemplateColumns:'66.667% 33.333%',alignItems:'flex-end',gap:0}}>
 
           {/* LEFT COL: "Beauty Beyond" equivalent — huge headline + scroll down */}
           <div>
@@ -404,7 +404,7 @@ export default function FensiPage() {
           </div>
 
           {/* RIGHT COL: subtitle + "book today" button (bottom-aligned, right-align) */}
-          <div style={{textAlign:'right',display:'flex',flexDirection:'column',justifyContent:'flex-end',paddingBottom:'.5rem',gap:'1.2rem'}}>
+          <div className='hero-right-col' style={{textAlign:'right',display:'flex',flexDirection:'column',justifyContent:'flex-end',paddingBottom:'.5rem',gap:'1.2rem'}}>
             {/* Subtitle lines — each in clip wrap */}
             <div>
               <div style={{overflow:'hidden'}}>
@@ -432,16 +432,15 @@ export default function FensiPage() {
         </div>
 
         {/* Mobile: simplified layout */}
-        <style>{`
-          @media(max-width:767px){
-            .hero-grid { grid-template-columns: 1fr !important; }
-          }
-        `}</style>
+              <style>{`
+        @keyframes fabFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
+        /* responsive handled via globals.css */
+      `}</style>
       </section>
 
       {/* ══ ABOUT ═══════════════════════════════ */}
-      <section id="osalonu" style={{background:'var(--plum)',padding:'10rem 5% 10rem 6%'}}>
-        <div className="md:grid" style={{gridTemplateColumns:'50% 50%',gap:'0',display:'grid',minHeight:'700px'}}>
+      <section id="osalonu" className='section-pad' style={{background:'var(--plum)',padding:'10rem 5% 10rem 6%'}}>
+        <div className="about-grid" style={{gridTemplateColumns:'50% 50%',gap:'0',display:'grid',minHeight:'700px'}}>
           {/* LEFT: image + text */}
           <div style={{paddingRight:'3rem'}}>
             <div data-clip style={{width:'100%',height:'400px',overflow:'hidden',position:'relative',marginBottom:'3rem'}}>
@@ -478,7 +477,7 @@ export default function FensiPage() {
           </div>
 
           {/* RIGHT: taller image (950px in template) */}
-          <div data-clip style={{position:'relative',minHeight:'700px',overflow:'hidden'}}>
+          <div data-clip className='about-right-img' style={{position:'relative',minHeight:'700px',overflow:'hidden'}}>
             <Image src="/photos/bob-highlights.jpg" alt="Fensi radovi" fill style={{objectFit:'cover',objectPosition:'center 10%'}} sizes="40vw"/>
           </div>
         </div>
@@ -506,7 +505,7 @@ export default function FensiPage() {
             <div className="srv-gradient-bottom"/>
             <div className="srv-gradient-left"/>
 
-            <div className="srv-content">
+            <div className='srv-content mobile-srv'>
               <div className="srv-label"><span className="srv-label-inner">{s.label}</span></div>
               <div className="srv-title"><span className="srv-title-inner">{s.title}</span></div>
               <div className="srv-desc"><span className="srv-desc-inner">{s.desc}</span></div>
@@ -552,7 +551,7 @@ export default function FensiPage() {
           <div style={{position:'absolute',top:0,right:0,bottom:0,width:'120px',background:'linear-gradient(270deg,rgba(21,2,24,.7) 0%,rgba(21,2,24,0) 100%)',zIndex:3,pointerEvents:'none'}}/>
           <div ref={galRef} className="drag-scroll" style={{display:'flex',overflowX:'auto',gap:0}}>
             {GALLERY.map((g,i)=>(
-              <div key={g.img+i} className="gal-item" style={{width:'clamp(300px,40vw,560px)',height:'clamp(420px,55vw,700px)',flexShrink:0}}>
+              <div key={g.img+i} className="gal-item gal-card" style={{width:'clamp(300px,40vw,560px)',height:'clamp(420px,55vw,700px)',flexShrink:0}}>
                 <Image src={g.img} alt={g.title} fill style={{objectFit:'cover',objectPosition:'center 15%'}} sizes="40vw"/>
                 {/* Bottom gradient like template: rgba(21,2,24,0) → rgba(21,2,24,0.5) */}
                 <div style={{position:'absolute',bottom:0,left:0,right:0,height:'35%',background:'linear-gradient(rgba(21,2,24,0) 0%,rgba(21,2,24,.6) 100%)',pointerEvents:'none'}}/>
@@ -590,9 +589,9 @@ export default function FensiPage() {
 
       {/* ══ TESTIMONIALS BODY ═══════════════════ */}
       <section style={{background:'var(--plum)',padding:'2rem 0 0'}}>
-        <div style={{display:'grid',gridTemplateColumns:'50% 50%'}}>
+        <div className='testi-grid' style={{display:'grid',gridTemplateColumns:'50% 50%'}}>
           {/* LEFT: hair photo */}
-          <div style={{position:'relative',height:'clamp(400px,60vw,800px)',overflow:'hidden'}}>
+          <div className='testi-photo' style={{position:'relative',height:'clamp(400px,60vw,800px)',overflow:'hidden'}}>
             <Image
               src={TESTI[testiIdx].img} alt="Testimonial"
               fill style={{objectFit:'cover',objectPosition:'center 15%',transition:'opacity .5s'}}
@@ -661,7 +660,7 @@ export default function FensiPage() {
           <p style={{fontFamily:"'Inter'",fontSize:'1rem',letterSpacing:'1px',color:'rgba(239,215,202,.5)',marginBottom:'3rem'}}>kod Anite i tima — odaberi datum, upiši se i čekaj potvrdu.</p>
         </div>
 
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'2rem',alignItems:'start'}}>
+        <div className='booking-grid' style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'2rem',alignItems:'start'}}>
           {/* Calendar — compact */}
           <div data-r="left" style={{background:'rgba(239,215,202,.03)',border:'1px solid rgba(239,215,202,.07)',padding:'1.2rem'}}>
             {/* Month nav */}
@@ -869,11 +868,9 @@ export default function FensiPage() {
         </div>
       )}
 
-      <style>{`
+            <style>{`
         @keyframes fabFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
-        .md\\:grid-cols-2 { grid-template-columns: 1fr 1fr; }
-        @media(min-width:768px) { .hidden { display: none !important; } .md\\:inline-flex { display: inline-flex !important; } .md\\:flex { display: flex !important; } }
-        @media(max-width:767px) { .hidden { display: block; } }
+        /* responsive handled via globals.css */
       `}</style>
     </>
   )
