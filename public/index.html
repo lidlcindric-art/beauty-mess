@@ -36,9 +36,12 @@ nav.solid{background:rgba(245,240,230,.96);backdrop-filter:blur(20px);padding:1r
 .nav-drawer .drawer-book{margin-top:1.5rem;background:var(--ink);color:var(--cream);text-align:center;border-radius:100px;padding:.9rem;font-size:.8rem;letter-spacing:1.5px;text-transform:uppercase;border:none!important}
 /* ── HERO ── */
 #hero{display:flex;flex-direction:column;background:var(--cream)}
-.hero-img-side{position:relative;width:100%;height:62vw;min-height:240px;max-height:420px;overflow:hidden;flex-shrink:0}
-.hero-img-side img{width:100%;height:100%;object-fit:cover;object-position:center 20%;transition:transform 8s ease}
-.hero-img-side:hover img{transform:scale(1.03)}
+.hero-img-side{position:relative;width:100%;height:55vw;min-height:220px;max-height:380px;overflow:hidden;flex-shrink:0}
+.hero-img-side img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;opacity:0;transition:opacity .9s ease-in-out}
+.hero-img-side img.active{opacity:1}
+.slide-dots{position:absolute;bottom:.8rem;right:1rem;display:flex;gap:.4rem;z-index:3}
+.slide-dot{width:5px;height:5px;border-radius:50%;background:rgba(245,240,230,.4);transition:all .3s;cursor:pointer}
+.slide-dot.active{background:var(--cream);width:16px;border-radius:3px}
 .hero-img-badge{position:absolute;bottom:1.2rem;left:1.4rem;background:var(--cream);padding:.7rem 1.1rem;display:flex;flex-direction:column;gap:.1rem}
 .hib-n{font-family:'Cormorant',serif;font-size:1.7rem;font-weight:500;color:var(--ink);line-height:1}
 .hib-l{font-size:.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink2)}
@@ -144,8 +147,8 @@ footer{background:var(--dark);border-top:1px solid rgba(245,240,230,.05);padding
 @media(min-width:768px){
   nav{padding:1.5rem 3rem}nav.solid{padding:1rem 3rem}
   .nav-center{display:flex}.nav-book{display:block}.nav-burger{display:none}
-  #hero{flex-direction:row;min-height:100dvh}
-  .hero-img-side{flex:1;height:auto;max-height:none;min-height:100dvh}
+  #hero{flex-direction:row;min-height:88vh;max-height:92vh}
+  .hero-img-side{flex:1;height:auto;max-height:none;min-height:88vh}
   .hero-img-badge{bottom:2.5rem;left:2.5rem}
   .hero-body{flex:0 0 48%;padding:0 3.5rem 4rem 3.5rem;justify-content:center;display:flex;flex-direction:column}
   .hero-h1{font-size:clamp(3.8rem,5.5vw,6.5rem)}
@@ -185,11 +188,29 @@ footer{background:var(--dark);border-top:1px solid rgba(245,240,230,.05);padding
 
 <section id="hero">
   <!-- Fotografija: gore na mobitelu, lijevo na desktopu -->
-  <div class="hero-img-side">
+  <div class="hero-img-side" id="heroSlider">
+    <!-- 1. Bojanje & pramenovi -->
+    <img class="active"
+      src="https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=1200&q=85&auto=format&fit=crop&crop=focalpoint"
+      alt="Pramenovi i balayage — Beauty Mess">
+    <!-- 2. Valovi i styling -->
     <img
-      src="https://images.unsplash.com/photo-1560869713-7d0a29430803?w=1400&q=90&auto=format&fit=crop&crop=focalpoint"
-      alt="Beauty Mess — salon za uljepšavanje"
-      onerror="this.parentElement.style.background='var(--warm)'">
+      src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=1200&q=85&auto=format&fit=crop&crop=focalpoint"
+      alt="Valovi i styling — Beauty Mess">
+    <!-- 3. Svečana frizura / updo -->
+    <img
+      src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1200&q=85&auto=format&fit=crop&crop=focalpoint"
+      alt="Svečana frizura — Beauty Mess">
+    <!-- 4. Boja kose -->
+    <img
+      src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=1200&q=85&auto=format&fit=crop&crop=focalpoint"
+      alt="Bojanje kose — Beauty Mess">
+    <!-- 5. Šišanje & feniranje -->
+    <img
+      src="https://images.unsplash.com/photo-1560869713-7d0a29430803?w=1200&q=85&auto=format&fit=crop&crop=focalpoint"
+      alt="Šišanje i feniranje — Beauty Mess">
+    <!-- Dot navigacija -->
+    <div class="slide-dots" id="slideDots"></div>
     <div class="hero-img-badge">
       <div class="hib-n">2017</div>
       <div class="hib-l">Središće, Zagreb</div>
@@ -333,6 +354,47 @@ const tt=document.getElementById('tt');tt.innerHTML+=tt.innerHTML;
 function toggleNav(){const b=document.getElementById('burger'),d=document.getElementById('navDrawer'),o=document.getElementById('navOv');b.classList.toggle('active');d.classList.toggle('open');o.classList.toggle('show');document.body.style.overflow=d.classList.contains('open')?'hidden':'';}
 function closeNav(){document.getElementById('burger').classList.remove('active');document.getElementById('navDrawer').classList.remove('open');document.getElementById('navOv').classList.remove('show');document.body.style.overflow='';}
 window.addEventListener('resize',()=>{if(window.innerWidth>=768)closeNav()});
+
+// ── HERO SLIDESHOW ────────────────────────────────────────────
+(function(){
+  const slider=document.getElementById('heroSlider');
+  if(!slider)return;
+  const imgs=slider.querySelectorAll('img');
+  const dotsWrap=document.getElementById('slideDots');
+  let cur=0,timer;
+
+  // Kreiraj dots
+  imgs.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='slide-dot'+(i===0?' active':'');
+    d.onclick=()=>goTo(i);
+    dotsWrap.appendChild(d);
+  });
+
+  function goTo(n){
+    imgs[cur].classList.remove('active');
+    dotsWrap.children[cur].classList.remove('active');
+    cur=(n+imgs.length)%imgs.length;
+    imgs[cur].classList.add('active');
+    dotsWrap.children[cur].classList.add('active');
+    resetTimer();
+  }
+
+  function resetTimer(){
+    clearInterval(timer);
+    timer=setInterval(()=>goTo(cur+1),3000);
+  }
+
+  // Touch/swipe
+  let sx=0;
+  slider.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
+  slider.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx;
+    if(Math.abs(dx)>40)goTo(dx<0?cur+1:cur-1);
+  },{passive:true});
+
+  resetTimer();
+})();
 let cY=new Date().getFullYear(),cM=new Date().getMonth(),selDate=null,selTime=null,takenSlots={};
 // Radno vrijeme: pon-pet 9-20, sub 9-16, ned zatvoreno
 const RADNO = {
