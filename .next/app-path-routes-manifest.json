@@ -1,6 +1,7 @@
 {
-  "/api/appointments/route": "/api/appointments",
+  "/_global-error/page": "/_global-error",
   "/_not-found/page": "/_not-found",
+  "/api/appointments/route": "/api/appointments",
   "/favicon.ico/route": "/favicon.ico",
   "/page": "/"
 }
