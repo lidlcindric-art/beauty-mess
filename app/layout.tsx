@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Fensi — Frizerski salon, Zagreb',
-  description: 'Frizerski salon Fensi — boja, pramenovi, valovi, keratin, svečane frizure. Rezerviraj termin online.',
+  title: 'Beauty Mess — Frizerski salon Središće, Zagreb',
+  description: 'Frizerski salon Beauty Mess — Brune Bušića 9, Središće Zagreb. Šišanje, boja, pramenovi, balayage, solarij. Rezerviraj online!',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
