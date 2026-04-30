@@ -85,7 +85,7 @@ nav.solid{background:rgba(245,240,230,.96);backdrop-filter:blur(20px);padding:1r
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
 .cal-dname{text-align:center;font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:.35rem 0}
 .cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:.8rem;cursor:pointer;color:var(--ink2);transition:all .2s;position:relative;min-height:32px}
-.cal-day:not(.empty):not(.past):hover{background:rgba(184,150,90,.1);color:var(--ink)}.cal-day.today{color:var(--gold);font-weight:500}.cal-day.selected{background:var(--ink);color:var(--cream)!important}.cal-day.past{opacity:.2;cursor:default}.cal-day.empty{cursor:default}
+.cal-day:not(.empty):not(.past):hover{background:rgba(184,150,90,.1);color:var(--ink)}.cal-day.today{color:var(--gold);font-weight:500}.cal-day.selected{background:var(--ink);color:var(--cream)!important}.cal-day.past{opacity:.2;cursor:default}.cal-day.empty{cursor:default}.cal-day.closed{opacity:.18;cursor:default;text-decoration:line-through}
 .cal-day.has-slots::after{content:'';position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:var(--gold)}.cal-day.full::after{background:var(--rose);opacity:.5}
 .slots-section{margin-top:1.1rem}.slots-label{font-size:.62rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink2);margin-bottom:.65rem}
 .slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem}
@@ -334,11 +334,81 @@ function toggleNav(){const b=document.getElementById('burger'),d=document.getEle
 function closeNav(){document.getElementById('burger').classList.remove('active');document.getElementById('navDrawer').classList.remove('open');document.getElementById('navOv').classList.remove('show');document.body.style.overflow='';}
 window.addEventListener('resize',()=>{if(window.innerWidth>=768)closeNav()});
 let cY=new Date().getFullYear(),cM=new Date().getMonth(),selDate=null,selTime=null,takenSlots={};
-const SLOTS=['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30'];
+// Radno vrijeme: pon-pet 9-20, sub 9-16, ned zatvoreno
+const RADNO = {
+  1: {od:'09:00', do:'19:30'}, // ponedjeljak  (zadnji termin 19:30 → kraj 20:00)
+  2: {od:'09:00', do:'19:30'}, // utorak
+  3: {od:'09:00', do:'19:30'}, // srijeda
+  4: {od:'09:00', do:'19:30'}, // četvrtak
+  5: {od:'09:00', do:'19:30'}, // petak
+  6: {od:'09:00', do:'15:30'}, // subota     (zadnji termin 15:30 → kraj 16:00)
+  0: null                       // nedjelja — zatvoreno
+};
+
+function getSlotsForDay(dow) {
+  const r = RADNO[dow];
+  if (!r) return [];
+  const all = [];
+  let h = parseInt(r.od), m = parseInt(r.od.split(':')[1]||0);
+  const [endH, endM] = r.do.split(':').map(Number);
+  while (h < endH || (h === endH && m <= endM)) {
+    all.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+    m += 30; if (m >= 60) { m -= 60; h++; }
+  }
+  return all;
+}
+const SLOTS = getSlotsForDay(1); // za refreshDots provjeru kapaciteta
 async function getSlots(d){if(takenSlots[d]!==undefined)return takenSlots[d];try{const r=await fetch(`/api/appointments?view=slots&date=${d}`);takenSlots[d]=(await r.json()).slots||[];}catch{takenSlots[d]=[]}return takenSlots[d];}
 function renderCal(){const months=['Siječanj','Veljača','Ožujak','Travanj','Svibanj','Lipanj','Srpanj','Kolovoz','Rujan','Listopad','Studeni','Prosinac'],days=['Pon','Uto','Sri','Čet','Pet','Sub','Ned'];document.getElementById('calTitle').textContent=`${months[cM]} ${cY}`;const g=document.getElementById('calGrid');g.innerHTML=days.map(d=>`<div class="cal-dname">${d}</div>`).join('');const first=new Date(cY,cM,1);let dow=(first.getDay()+6)%7;for(let i=0;i<dow;i++)g.innerHTML+=`<div class="cal-day empty"></div>`;const total=new Date(cY,cM+1,0).getDate(),today=new Date();for(let d=1;d<=total;d++){const dt=new Date(cY,cM,d),past=dt<new Date(today.getFullYear(),today.getMonth(),today.getDate()),isT=dt.toDateString()===today.toDateString(),ds=`${cY}-${String(cM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,sel=ds===selDate;g.innerHTML+=`<div class="cal-day${past?' past':''}${isT?' today':''}${sel?' selected':''}" data-date="${ds}" onclick="${past?'':'selectDate(\''+ds+'\')'}">${d}</div>`;}refreshDots();}
-async function refreshDots(){for(const el of document.querySelectorAll('.cal-day[data-date]:not(.past)')){const t=await getSlots(el.dataset.date);if(t.length>=SLOTS.length)el.classList.add('full');else if(t.length>0)el.classList.add('has-slots');}}
-async function selectDate(ds){selDate=ds;selTime=null;document.getElementById('selBadge').style.display='none';renderCal();const taken=await getSlots(ds);const sec=document.getElementById('slotsSection'),sg=document.getElementById('slotsGrid');sec.style.display='block';const[y,m,d]=ds.split('-'),dow=new Date(y,m-1,d).getDay(),avail=dow===0?[]:dow===6?SLOTS.filter(s=>s<='15:30'):SLOTS;if(!avail.length){sg.innerHTML='<p style="color:var(--sand);font-size:.78rem;grid-column:1/-1">Zatvoreno</p>';return;}sg.innerHTML=avail.map(s=>`<div class="slot${taken.includes(s)?' taken':''}" onclick="${taken.includes(s)?'':'selectSlot(\''+s+'\')'}">${s}</div>`).join('');}
+async function refreshDots(){
+  for(const el of document.querySelectorAll('.cal-day[data-date]:not(.past)')){
+    const[y,m,d]=el.dataset.date.split('-');
+    const dow=new Date(y,m-1,d).getDay();
+    if(!RADNO[dow]){el.classList.add('closed');continue;}
+    const dayTotal=getSlotsForDay(dow).length;
+    const t=await getSlots(el.dataset.date);
+    if(t.length>=dayTotal)el.classList.add('full');
+    else if(t.length>0)el.classList.add('has-slots');
+  }
+}
+async function selectDate(ds){
+  selDate=ds;selTime=null;
+  document.getElementById('selBadge').style.display='none';
+  renderCal();
+  const taken=await getSlots(ds);
+  const sec=document.getElementById('slotsSection'),sg=document.getElementById('slotsGrid');
+  sec.style.display='block';
+  const[y,m,d]=ds.split('-');
+  const dow=new Date(y,m-1,d).getDay();
+  const daySlots=getSlotsForDay(dow);
+
+  if(!daySlots.length){
+    sg.innerHTML='<p style="font-size:.78rem;color:var(--muted);grid-column:1/-1;text-align:center;padding:.5rem 0">☕ Nedjelja — zatvoreno</p>';
+    return;
+  }
+
+  // Ako je danas — sakrij prošle termine (s 30 min bufferom)
+  const now=new Date();
+  const todayStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  const isToday=ds===todayStr;
+  const nowMins=now.getHours()*60+now.getMinutes()+30;
+
+  const avail=isToday
+    ? daySlots.filter(s=>{const[sh,sm]=s.split(':').map(Number);return sh*60+sm>nowMins;})
+    : daySlots;
+
+  if(!avail.length){
+    sg.innerHTML='<p style="font-size:.78rem;color:var(--muted);grid-column:1/-1;text-align:center;padding:.5rem 0">Nema više slobodnih termina danas</p>';
+    return;
+  }
+
+  sg.innerHTML=avail.map(s=>{
+    const isTaken=taken.includes(s);
+    return `<div class="slot${isTaken?' taken':''}" onclick="${isTaken?'':'selectSlot(\''+s+'\')'}">
+      ${s}
+    </div>`;
+  }).join('');
+}
 function selectSlot(t){selTime=t;document.querySelectorAll('.slot').forEach(s=>s.classList.toggle('selected',s.textContent===t));const[y,m,d]=selDate.split('-'),lbl=new Date(y,m-1,d).toLocaleDateString('hr-HR',{weekday:'long',day:'numeric',month:'long'});const b=document.getElementById('selBadge');b.style.display='block';b.textContent=`✦ ${lbl} u ${t}`;}
 document.getElementById('prevM').onclick=()=>{cM--;if(cM<0){cM=11;cY--;}renderCal()};
 document.getElementById('nextM').onclick=()=>{cM++;if(cM>11){cM=0;cY++;}renderCal()};
