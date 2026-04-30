@@ -129,6 +129,12 @@ footer{background:var(--dark);border-top:1px solid rgba(245,240,230,.05);padding
 .appt-svc{font-size:.68rem;background:rgba(184,150,90,.1);color:var(--gold);padding:.15rem .55rem;border-radius:4px;display:inline-block;margin-top:.25rem}
 .appt-dt{font-family:'Cormorant',serif;font-size:1.15rem;color:var(--ink);text-align:right;white-space:nowrap}
 .appt-del{background:none;border:1px solid rgba(196,131,142,.25);color:rgba(196,131,142,.6);border-radius:5px;padding:.28rem .55rem;font-size:.68rem;transition:all .2s;display:block;margin-top:.25rem}.appt-del:hover{border-color:var(--rose);color:var(--rose)}
+.appt-confirm{background:none;border:1px solid rgba(184,150,90,.3);color:var(--gold);border-radius:5px;padding:.28rem .55rem;font-size:.68rem;transition:all .2s;display:block;margin-top:.25rem}.appt-confirm:hover{background:rgba(184,150,90,.1);border-color:var(--gold)}
+.appt-card.pending{border-left:3px solid var(--gold)}
+.status-badge{display:inline-block;font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;padding:.15rem .5rem;border-radius:3px;margin-left:.4rem}
+.status-pending{background:rgba(184,150,90,.12);color:var(--gold)}
+.status-confirmed{background:rgba(28,24,18,.06);color:var(--muted)}
+.pending-count{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:var(--gold);color:var(--cream);border-radius:50%;font-size:.62rem;font-weight:500;margin-left:.4rem;vertical-align:middle}
 .empty-msg{text-align:center;padding:2.5rem;color:var(--muted);font-style:italic;font-family:'Cormorant',serif;font-size:1.05rem}
 @keyframes aUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
@@ -281,7 +287,7 @@ footer{background:var(--dark);border-top:1px solid rgba(245,240,230,.05);padding
         <button class="submit-btn" id="bookBtn" onclick="submitBooking()">Potvrdi rezervaciju →</button>
         <p style="font-size:.65rem;color:var(--sand);margin-top:.6rem;text-align:center;letter-spacing:.3px">Odaberi datum i termin iz kalendara</p>
       </div>
-      <div class="book-ok" id="bookOk"><div class="icon">✦</div><h4>Termin rezerviran!</h4><p id="okMsg">Vidimo se uskoro.</p><button onclick="resetBooking()">Nova rezervacija</button></div>
+      <div class="book-ok" id="bookOk"><div class="icon">✦</div><h4>Rezervacija zaprimljena!</h4><p id="okMsg">Vidimo se uskoro.</p><button onclick="resetBooking()">Nova rezervacija</button></div>
     </div>
   </div>
 </section>
@@ -313,7 +319,7 @@ footer{background:var(--dark);border-top:1px solid rgba(245,240,230,.05);padding
     <div class="admin-head"><h2>✦ Admin · Beauty Mess</h2><button class="admin-x" onclick="closeAdmin()">✕</button></div>
     <div class="admin-body">
       <div id="adminLogin"><h3>Prijava vlasnice</h3><div class="fg"><label>Lozinka</label><input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminAuth()"></div><button onclick="adminAuth()" style="width:100%;background:var(--ink);color:var(--cream);border:none;border-radius:8px;padding:.78rem;font-size:.72rem;letter-spacing:1.5px;text-transform:uppercase;margin-top:.4rem">Prijavi se</button><p id="adminErr" style="color:var(--rose);font-size:.75rem;margin-top:.4rem;display:none">Pogrešna lozinka</p></div>
-      <div id="adminDash" style="display:none"><div class="admin-tabs"><button class="a-tab active" onclick="showAdminTab('today')">Danas</button><button class="a-tab" onclick="showAdminTab('upcoming')">Nadolazeći</button><button class="a-tab" onclick="showAdminTab('all')">Svi termini</button></div><div id="adminAppts"></div></div>
+      <div id="adminDash" style="display:none"><div class="admin-tabs"><button class="a-tab" id="tabPending" onclick="showAdminTab('pending')">Na čekanju <span class="pending-count" id="pendingCnt" style="display:none">0</span></button><button class="a-tab active" onclick="showAdminTab('today')">Danas</button><button class="a-tab" onclick="showAdminTab('upcoming')">Nadolazeći</button><button class="a-tab" onclick="showAdminTab('all')">Svi termini</button></div><div id="adminAppts"></div></div>
     </div>
   </div>
 </div>
@@ -337,16 +343,82 @@ function selectSlot(t){selTime=t;document.querySelectorAll('.slot').forEach(s=>s
 document.getElementById('prevM').onclick=()=>{cM--;if(cM<0){cM=11;cY--;}renderCal()};
 document.getElementById('nextM').onclick=()=>{cM++;if(cM>11){cM=0;cY++;}renderCal()};
 renderCal();
-async function submitBooking(){const name=document.getElementById('bName').value.trim(),phone=document.getElementById('bPhone').value.trim(),email=document.getElementById('bEmail').value.trim(),service=document.getElementById('bService').value,note=document.getElementById('bNote').value.trim();if(!name||!phone||!service)return alert('Molimo ispunite ime, telefon i uslugu.');if(!selDate||!selTime)return alert('Molimo odaberite datum i termin iz kalendara.');const btn=document.getElementById('bookBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>Rezerviram...';try{const r=await fetch('/api/appointments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,email,service,date:selDate,time:selTime,note})});const data=await r.json();if(!r.ok)throw new Error(data.error||'Greška');if(!takenSlots[selDate])takenSlots[selDate]=[];takenSlots[selDate].push(selTime);const[y,m,d]=selDate.split('-'),lbl=new Date(y,m-1,d).toLocaleDateString('hr-HR',{weekday:'long',day:'numeric',month:'long'});document.getElementById('okMsg').textContent=`${name}, vidimo se ${lbl} u ${selTime}. ✦`;document.getElementById('bformWrap').style.display='none';document.getElementById('bookOk').style.display='block';renderCal();}catch(e){alert(e.message);btn.disabled=false;btn.textContent='Potvrdi rezervaciju →';}}
+async function submitBooking(){const name=document.getElementById('bName').value.trim(),phone=document.getElementById('bPhone').value.trim(),email=document.getElementById('bEmail').value.trim(),service=document.getElementById('bService').value,note=document.getElementById('bNote').value.trim();if(!name||!phone||!service)return alert('Molimo ispunite ime, telefon i uslugu.');if(!selDate||!selTime)return alert('Molimo odaberite datum i termin iz kalendara.');const btn=document.getElementById('bookBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>Rezerviram...';try{const r=await fetch('/api/appointments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,email,service,date:selDate,time:selTime,note})});const data=await r.json();if(!r.ok)throw new Error(data.error||'Greška');if(!takenSlots[selDate])takenSlots[selDate]=[];takenSlots[selDate].push(selTime);const[y,m,d]=selDate.split('-'),lbl=new Date(y,m-1,d).toLocaleDateString('hr-HR',{weekday:'long',day:'numeric',month:'long'});document.getElementById('okMsg').textContent=`${name}, rezervacija je zaprimljena! Anita će je uskoro potvrditi. ✦`;document.getElementById('bformWrap').style.display='none';document.getElementById('bookOk').style.display='block';renderCal();}catch(e){alert(e.message);btn.disabled=false;btn.textContent='Potvrdi rezervaciju →';}}
 function resetBooking(){selDate=null;selTime=null;['bName','bPhone','bEmail','bNote'].forEach(id=>document.getElementById(id).value='');document.getElementById('bService').value='';document.getElementById('bformWrap').style.display='block';document.getElementById('bookOk').style.display='none';document.getElementById('bookBtn').disabled=false;document.getElementById('bookBtn').textContent='Potvrdi rezervaciju →';document.getElementById('slotsSection').style.display='none';document.getElementById('selBadge').style.display='none';renderCal();}
 let adminKey='',allAppts=[];
 function openAdmin(){document.getElementById('admin-panel').style.display='block';document.body.style.overflow='hidden';}
 function closeAdmin(){document.getElementById('admin-panel').style.display='none';document.body.style.overflow='';}
 document.getElementById('admin-panel').addEventListener('click',e=>{if(e.target===document.getElementById('admin-panel'))closeAdmin();});
 async function adminAuth(){const pass=document.getElementById('adminPass').value;try{const r=await fetch('/api/appointments',{headers:{'x-admin-key':pass}});if(!r.ok)throw new Error();const data=await r.json();allAppts=data.appointments||[];adminKey=pass;document.getElementById('adminLogin').style.display='none';document.getElementById('adminDash').style.display='block';showAdminTab('today');}catch{document.getElementById('adminErr').style.display='block';}}
-function showAdminTab(tab){document.querySelectorAll('.a-tab').forEach((t,i)=>t.classList.toggle('active',['today','upcoming','all'][i]===tab));const today=new Date().toISOString().split('T')[0];let list=tab==='today'?allAppts.filter(a=>a.date===today):tab==='upcoming'?allAppts.filter(a=>a.date>=today).slice(0,30):allAppts;renderAppts(list,tab);}
-function renderAppts(list,tab){const el=document.getElementById('adminAppts');if(!list.length){el.innerHTML=`<div class="empty-msg">Nema termina${tab==='today'?' za danas':''}</div>`;return;}el.innerHTML=list.map(a=>`<div class="appt-card" id="ac-${a.id}"><div><div class="appt-name">${a.name}</div><div class="appt-meta">📞 ${a.phone}${a.email?' · '+a.email:''}</div><div class="appt-svc">${a.service}</div>${a.note?`<div style="font-size:.68rem;color:var(--muted);margin-top:.2rem">💬 ${a.note}</div>`:''}</div><div><div class="appt-dt">${a.time}<br><span style="font-size:.68rem;color:var(--muted)">${a.date}</span></div><button class="appt-del" onclick="delAppt('${a.id}','${a.date}','${a.time}')">Otkaži</button></div></div>`).join('');}
-async function delAppt(id,date,time){if(!confirm(`Otkazati termin ${date} u ${time}?`))return;const r=await fetch(`/api/appointments?id=${id}`,{method:'DELETE',headers:{'x-admin-key':adminKey}});if(r.ok){document.getElementById(`ac-${id}`)?.remove();allAppts=allAppts.filter(a=>a.id!==id);if(takenSlots[date])takenSlots[date]=takenSlots[date].filter(s=>s!==time);refreshDots();}}
+function showAdminTab(tab){
+  document.querySelectorAll('.a-tab').forEach(t=>t.classList.remove('active'));
+  const tabs=['pending','today','upcoming','all'];
+  const idx=tabs.indexOf(tab);
+  if(idx>=0)document.querySelectorAll('.a-tab')[idx].classList.add('active');
+  const today=new Date().toISOString().split('T')[0];
+  let list;
+  if(tab==='pending')list=allAppts.filter(a=>a.status==='pending');
+  else if(tab==='today')list=allAppts.filter(a=>a.date===today);
+  else if(tab==='upcoming')list=allAppts.filter(a=>a.date>=today).slice(0,30);
+  else list=allAppts;
+  renderAppts(list,tab);
+}
+function renderAppts(list,tab){
+  const el=document.getElementById('adminAppts');
+  if(!list.length){
+    const msg=tab==='pending'?'Nema termina na čekanju':tab==='today'?'Nema termina za danas':'Nema termina';
+    el.innerHTML=`<div class="empty-msg">${msg}</div>`;return;
+  }
+  el.innerHTML=list.map(a=>{
+    const isPending=a.status==='pending';
+    const badge=isPending?'<span class="status-badge status-pending">čeka potvrdu</span>':'<span class="status-badge status-confirmed">potvrđeno</span>';
+    const confirmBtn=isPending?`<button class="appt-confirm" onclick="confirmAppt('${a.id}')">✓ Potvrdi</button>`:'';
+    return `<div class="appt-card${isPending?' pending':''}" id="ac-${a.id}">
+      <div>
+        <div class="appt-name">${a.name}${badge}</div>
+        <div class="appt-meta">📞 ${a.phone}${a.email?' · '+a.email:''}</div>
+        <div class="appt-svc">${a.service}</div>
+        ${a.note?`<div style="font-size:.68rem;color:var(--muted);margin-top:.2rem">💬 ${a.note}</div>`:''}
+      </div>
+      <div>
+        <div class="appt-dt">${a.time}<br><span style="font-size:.68rem;color:var(--muted)">${a.date}</span></div>
+        ${confirmBtn}
+        <button class="appt-del" onclick="delAppt('${a.id}','${a.date}','${a.time}')">✕ Odbij</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function confirmAppt(id){
+  const card=document.getElementById(`ac-${id}`);
+  if(!card)return;
+  const r=await fetch(`/api/appointments?id=${id}`,{method:'PATCH',headers:{'x-admin-key':adminKey}});
+  if(r.ok){
+    const data=await r.json();
+    const appt=allAppts.find(a=>a.id===id);
+    if(appt){appt.status='confirmed';appt.confirmedAt=data.appointment?.confirmedAt;}
+    card.classList.remove('pending');
+    card.querySelector('.status-badge').className='status-badge status-confirmed';
+    card.querySelector('.status-badge').textContent='potvrđeno';
+    card.querySelector('.appt-confirm')?.remove();
+    updatePendingCount();
+  }
+}
+function updatePendingCount(){
+  const n=allAppts.filter(a=>a.status==='pending').length;
+  const cnt=document.getElementById('pendingCnt');
+  if(cnt){cnt.textContent=n;cnt.style.display=n>0?'inline-flex':'none';}
+}
+async function delAppt(id,date,time){
+  if(!confirm(`Otkazati termin ${date} u ${time}?`))return;
+  const r=await fetch(`/api/appointments?id=${id}`,{method:'DELETE',headers:{'x-admin-key':adminKey}});
+  if(r.ok){
+    document.getElementById(`ac-${id}`)?.remove();
+    allAppts=allAppts.filter(a=>a.id!==id);
+    if(takenSlots[date])takenSlots[date]=takenSlots[date].filter(s=>s!==time);
+    refreshDots();
+    updatePendingCount();
+  }
+}
 </script>
 </body>
 </html>
