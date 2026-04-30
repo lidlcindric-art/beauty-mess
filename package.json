@@ -1,0 +1,9 @@
+{
+  "name": "beauty-mess",
+  "version": "1.0.0",
+  "description": "Beauty Mess — salon za uljepšavanje, Brune Bušića 18, Središće",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "@upstash/redis": "^1.34.0"
+  }
+}
