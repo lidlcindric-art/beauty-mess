@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Beauty Mess — Salon za uljepšavanje · Središće, Zagreb</title>
-<meta name="description" content="Beauty Mess — profesionalni salon za uljepšavanje. Brune Bušića 18, Središće Zagreb. Rezervirajte termin online.">
+<meta name="description" content="Beauty Mess — profesionalni salon za uljepšavanje. Brune Bušića 9, L-22, Središće Zagreb. Rezervirajte termin online.">
 <meta name="theme-color" content="#1a1018">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -99,7 +99,14 @@ nav.scrolled .nav-links a{color:var(--muted)}
 .orb1{width:500px;height:500px;right:-100px;top:50%;transform:translateY(-50%);background:radial-gradient(circle,rgba(201,112,128,.06) 0%,transparent 70%);animation:orbFloat 8s ease-in-out infinite}
 .orb2{width:200px;height:200px;right:15%;top:20%;background:radial-gradient(circle,rgba(212,168,90,.05) 0%,transparent 70%);animation:orbFloat 6s ease-in-out infinite 2s}
 
-.hero-content{position:relative;z-index:2;padding:0 3rem;max-width:700px}
+/* HERO IMAGE */
+.hero-img-wrap{position:absolute;right:0;top:0;bottom:0;width:48%;overflow:hidden;pointer-events:none}
+.hero-img-wrap::before{content:'';position:absolute;left:0;top:0;bottom:0;width:55%;background:linear-gradient(to right,var(--bg) 0%,transparent 100%);z-index:2}
+.hero-img-wrap::after{content:'';position:absolute;inset:0;background:rgba(14,11,16,.35);z-index:1}
+.hero-img{width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;animation:imgReveal 1.2s .4s forwards;filter:saturate(.85)}
+@keyframes imgReveal{from{opacity:0;transform:scale(1.06)}to{opacity:1;transform:scale(1)}}
+
+.hero-content{position:relative;z-index:3;padding:0 3rem;max-width:700px}
 .hero-tag{display:inline-flex;align-items:center;gap:.6rem;background:rgba(232,160,168,.08);border:1px solid rgba(232,160,168,.2);color:var(--rose);font-size:.72rem;letter-spacing:2.5px;text-transform:uppercase;padding:.4rem 1rem;border-radius:100px;margin-bottom:2rem;opacity:0;animation:fadeSlide .8s .3s forwards}
 .hero-tag::before{content:'';width:6px;height:6px;background:var(--rose);border-radius:50%}
 h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,8vw,7rem);font-weight:300;line-height:.92;letter-spacing:-2px;color:var(--cream);opacity:0;animation:fadeSlide .9s .5s forwards}
@@ -310,8 +317,16 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:2.5rem 3r
   <div class="hero-noise"></div>
   <div class="orb orb1"></div>
   <div class="orb orb2"></div>
+  <!-- HERO IMAGE — Unsplash (free license) -->
+  <div class="hero-img-wrap">
+    <img class="hero-img"
+      src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=1200&q=85&auto=format&fit=crop"
+      alt="Beauty Mess salon — manikura i uljepšavanje"
+      onerror="this.parentElement.style.display='none'">
+  </div>
+
   <div class="hero-content">
-    <div class="hero-tag">Središće · Brune Bušića 18 · Zagreb</div>
+    <div class="hero-tag">Središće · Brune Bušića 9, L-22 · Zagreb</div>
     <h1>Salon<br>koji te<br><em>razmazuje.</em></h1>
     <p class="hero-sub">Profesionalna njega kose, noktiju i ljepote uz toplu atmosferu. Rezerviraj termin online — za tebe, uvijek na vrijeme.</p>
     <div class="hero-btns">
@@ -466,11 +481,11 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:2.5rem 3r
     <div class="k-info" data-anim="fade-left">
       <div class="k-item">
         <div class="k-icon">📍</div>
-        <div><div class="k-label">Adresa</div><div class="k-val">Ulica Brune Bušića 18, 10000 Zagreb — Središće</div></div>
+        <div><div class="k-label">Adresa</div><div class="k-val">Ulica Brune Bušića 9, L-22 prizemlje<br>10000 Zagreb — Središće</div></div>
       </div>
       <div class="k-item">
         <div class="k-icon">📞</div>
-        <div><div class="k-label">Telefon</div><div class="k-val"><a href="tel:+385912345678">+385 91 XXX XXXX</a></div></div>
+        <div><div class="k-label">Telefon</div><div class="k-val"><a href="tel:+38598554037">098 554 037</a></div></div>
       </div>
       <div class="k-item">
         <div class="k-icon">🕐</div>
@@ -483,7 +498,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:2.5rem 3r
     </div>
     <div data-anim="fade-right">
       <div class="map-wrap">
-        <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=15.9690%2C45.7990%2C15.9730%2C45.8010&layer=mapnik&marker=45.8000%2C15.9710" loading="lazy"></iframe>
+        <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=15.9851%2C45.7797%2C15.9891%2C45.7817&layer=mapnik&marker=45.7807%2C15.9871" loading="lazy"></iframe>
       </div>
     </div>
   </div>
@@ -491,7 +506,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:2.5rem 3r
 
 <footer>
   <div class="foot-logo">Beauty <em>Mess</em></div>
-  <div class="foot-copy">© 2025 Beauty Mess · Obrt za usluge · Anita Labaš · Brune Bušića 18, Zagreb</div>
+  <div class="foot-copy">© 2025 Beauty Mess · Obrt za usluge, vl. Anita Labaš · OIB: 74229697531 · Brune Bušića 9, Zagreb</div>
   <div class="foot-links">
     <a href="#usluge">Usluge</a>
     <a href="#rezervacija">Rezervacija</a>
@@ -499,7 +514,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:2.5rem 3r
   </div>
 </footer>
 
-<a href="tel:+385912345678" class="fab" title="Nazovi nas">📞</a>
+<a href="tel:+38598554037" class="fab" title="Nazovi nas">📞</a>
 <button class="admin-trigger" id="adminTrigger" onclick="openAdmin()" title="Admin panel">⚙️</button>
 
 <!-- ═══════════════════════════════════
