@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST='{"app/page.tsx -> @studio-freight/lenis":{"id":6789,"files":["static/chunks/789.9d78beaf30a40c2d.js"]},"app/page.tsx -> gsap":{"id":802,"files":["static/chunks/c15bf2b0.3365d872716baa8c.js","static/chunks/802.2bd4a7c8be1adc2a.js"]},"app/page.tsx -> gsap/ScrollTrigger":{"id":9088,"files":["static/chunks/88.173b4fc3875ad1b5.js"]}}';
