@@ -2,10 +2,14 @@
 <html lang="hr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Beauty Mess — Salon za uljepšavanje · Središće, Zagreb</title>
 <meta name="description" content="Beauty Mess — profesionalni salon za uljepšavanje. Brune Bušića 9, L-22, Središće Zagreb. Rezervirajte termin online.">
-<meta name="theme-color" content="#1a1018">
+<meta name="theme-color" content="#0e0b10">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Beauty Mess">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
@@ -33,7 +37,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;ove
 /* ═══════════════════════════════════
    CUSTOM CURSOR
 ═══════════════════════════════════ */
-#cur{position:fixed;width:8px;height:8px;background:var(--rose);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s}
+#cur{position:fixed;width:8px;height:8px;background:var(--rose);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;display:none}@media(hover:hover){#cur,#cur2{display:block}}
 #cur2{position:fixed;width:30px;height:30px;border:1px solid rgba(232,160,168,.3);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .1s ease}
 
 /* ═══════════════════════════════════
@@ -213,7 +217,7 @@ section{padding:7rem 3rem}
 /* ═══════════════════════════════════
    ADMIN PANEL (hidden by default)
 ═══════════════════════════════════ */
-#admin-panel{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);overflow-y:auto}
+#admin-panel{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .admin-wrap{max-width:860px;margin:2rem auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
 .admin-header{background:var(--card);padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
 .admin-header h2{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--cream)}
@@ -266,9 +270,9 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:2.5rem 3r
 .foot-links a:hover{color:var(--rose)}
 
 /* FAB */
-.fab{position:fixed;bottom:2rem;right:2rem;background:var(--rose2);color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 8px 30px rgba(201,112,128,.35);z-index:90;animation:fabBounce 3s ease-in-out infinite;font-size:1.3rem}
+.fab{position:fixed;bottom:max(2rem,env(safe-area-inset-bottom,2rem));right:2rem;background:var(--rose2);color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 8px 30px rgba(201,112,128,.35);z-index:90;animation:fabBounce 3s ease-in-out infinite;font-size:1.3rem}
 .fab:hover{filter:brightness(1.1)}
-.admin-trigger{position:fixed;bottom:2rem;left:2rem;background:var(--card);border:1px solid var(--border);color:var(--muted);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:90;font-size:1rem;transition:all .2s}
+.admin-trigger{position:fixed;bottom:max(2rem,env(safe-area-inset-bottom,2rem));left:2rem;background:var(--card);border:1px solid var(--border);color:var(--muted);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:90;font-size:1rem;transition:all .2s}
 .admin-trigger:hover{border-color:var(--rose);color:var(--rose)}
 
 /* ═══════════════════════════════════
@@ -282,15 +286,128 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:2.5rem 3r
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle;margin-right:.5rem}
 
 /* ═══════════════════════════════════
-   RESPONSIVE
+   MOBILE-FIRST RESPONSIVE
+   Base = 375px mobile
+   sm  = 480px
+   md  = 768px
+   lg  = 1024px
+   xl  = 1280px
 ═══════════════════════════════════ */
-@media(max-width:900px){
-  .booking-wrap,.kontakt-grid{grid-template-columns:1fr}
-  nav ul{display:none}
-  section{padding:5rem 1.5rem}
-  .hero-content{padding:0 1.5rem}
-  .stats-bar{gap:1.5rem;flex-wrap:wrap}
-  footer{padding:2rem 1.5rem}
+
+/* ── OVERRIDE DESKTOP DEFAULTS FOR MOBILE ── */
+
+/* Nav — hamburger on mobile */
+nav{padding:1rem 1.2rem}
+nav.scrolled{padding:.85rem 1.2rem}
+.nav-links{display:none}
+.nav-hamburger{display:flex;flex-direction:column;gap:5px;cursor:pointer;padding:.4rem;border:none;background:transparent;z-index:101}
+.nav-hamburger span{display:block;width:22px;height:1.5px;background:rgba(240,232,236,.7);transition:all .3s;border-radius:2px}
+.nav-hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* Mobile nav drawer */
+.nav-drawer{position:fixed;top:0;right:-100%;width:75%;max-width:300px;height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:100;transition:right .35s cubic-bezier(.16,1,.3,1);padding:5rem 2rem 2rem;display:flex;flex-direction:column;gap:0}
+.nav-drawer.open{right:0;box-shadow:-20px 0 60px rgba(0,0,0,.5)}
+.nav-drawer a{display:block;padding:1rem 0;color:var(--muted);text-decoration:none;font-size:1.1rem;letter-spacing:1px;border-bottom:1px solid var(--border);transition:color .2s}
+.nav-drawer a:hover{color:var(--rose)}
+.nav-drawer .nav-cta{margin-top:1.5rem;background:var(--rose2)!important;color:#fff!important;text-align:center;border-radius:100px;border:none!important;padding:.9rem!important;font-size:.95rem!important}
+.nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99;display:none;backdrop-filter:blur(3px)}
+.nav-overlay.show{display:block}
+
+/* Hero — mobile */
+#hero{min-height:100svh;padding:0;padding-bottom:env(safe-area-inset-bottom,0)}
+.hero-content{padding:6rem 1.4rem 3rem;position:relative;z-index:3}
+.hero-img-wrap{width:100%;opacity:.25}
+.hero-img-wrap::before{width:100%;background:linear-gradient(to bottom,var(--bg) 0%,transparent 40%,var(--bg) 100%)}
+.hero-img-wrap::after{background:rgba(14,11,16,.55)}
+h1{font-size:clamp(2.8rem,12vw,4rem);letter-spacing:-1px}
+.hero-sub{font-size:.9rem}
+.hero-btns{flex-direction:column;align-items:flex-start;gap:.8rem}
+.btn-pri,.btn-sec{width:100%;text-align:center;justify-content:center}
+.stats-bar{gap:0;flex-wrap:wrap;margin-top:2.5rem}
+.stat{flex:0 0 50%;padding:.8rem 0}
+
+/* Sections — mobile */
+section{padding:4rem 1.4rem}#usluge{padding-top:3rem}
+.sec-title{font-size:clamp(2rem,8vw,2.8rem)}
+
+/* Usluge — 1 col mobile */
+.usluge-grid{grid-template-columns:1fr;gap:1px}
+
+/* Booking — stacked mobile */
+.booking-wrap{grid-template-columns:1fr;gap:2rem}
+.slots-grid{grid-template-columns:repeat(3,1fr)}
+.book-form{padding:1.5rem}
+
+/* Calendar — touch-friendly */
+.cal-day{min-height:36px;font-size:.82rem}
+.slot{padding:.6rem .3rem;font-size:.78rem}
+
+/* Kontakt — stacked mobile */
+.kontakt-grid{grid-template-columns:1fr;gap:2rem}
+
+/* Footer — stacked */
+footer{padding:2rem 1.4rem;flex-direction:column;text-align:center;gap:.8rem}
+.foot-links{justify-content:center}
+
+/* Admin panel — full screen mobile */
+.admin-wrap{margin:.5rem;border-radius:12px}
+.admin-body{padding:1.2rem}
+
+/* FAB + admin trigger — larger touch targets */
+.fab{width:52px;height:52px;font-size:1.2rem;bottom:1.5rem;right:1.5rem}
+.admin-trigger{bottom:1.5rem;left:1.5rem}
+
+/* Form inputs — 44px min touch target */
+.fg input,.fg select,.fg textarea{padding:.9rem 1rem;font-size:1rem}
+.book-btn{padding:1rem;font-size:1rem}
+
+/* ── SM: 480px ── */
+@media(min-width:480px){
+  .hero-content{padding:7rem 2rem 3rem}
+  h1{font-size:clamp(3rem,10vw,5rem)}
+  .slots-grid{grid-template-columns:repeat(4,1fr)}
+  .stat{flex:0 0 auto}
+  .stats-bar{gap:2rem}
+}
+
+/* ── MD: 768px ── */
+@media(min-width:768px){
+  nav{padding:1.3rem 2.5rem}
+  nav.scrolled{padding:1rem 2.5rem}
+  .nav-links{display:flex}
+  .nav-hamburger{display:none}
+  #hero{padding:0}
+  .hero-content{padding:0 2.5rem;max-width:660px}
+  .hero-img-wrap{width:48%;opacity:1}
+  .hero-img-wrap::before{width:55%;background:linear-gradient(to right,var(--bg) 0%,transparent 100%)}
+  .hero-img-wrap::after{background:rgba(14,11,16,.35)}
+  h1{font-size:clamp(3.5rem,6vw,5.5rem);letter-spacing:-2px}
+  .hero-sub{font-size:.95rem}
+  .hero-btns{flex-direction:row;align-items:center;width:auto}
+  .btn-pri,.btn-sec{width:auto}
+  section{padding:6rem 2.5rem}
+  .usluge-grid{grid-template-columns:repeat(2,1fr)}
+  .booking-wrap{grid-template-columns:1fr 1fr;gap:3rem}
+  .kontakt-grid{grid-template-columns:1fr 1fr;gap:3rem}
+  footer{flex-direction:row;text-align:left}
+  .foot-links{justify-content:flex-end}
+  .fab{width:56px;height:56px;font-size:1.3rem;bottom:2rem;right:2rem}
+  .admin-trigger{bottom:2rem;left:2rem}
+  .admin-wrap{margin:2rem auto}
+}
+
+/* ── LG: 1024px ── */
+@media(min-width:1024px){
+  nav{padding:1.3rem 3rem}
+  nav.scrolled{padding:1rem 3rem}
+  .hero-content{padding:0 3rem}
+  section{padding:7rem 3rem}
+  .usluge-grid{grid-template-columns:repeat(3,1fr)}
+  .booking-wrap{gap:5rem}
+  .kontakt-grid{gap:4rem}
+  footer{padding:2.5rem 3rem}
 }
 </style>
 </head>
@@ -301,6 +418,16 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:2.5rem 3r
 <div id="sp"></div>
 
 <!-- NAV -->
+<div class="nav-overlay" id="navOverlay" onclick="closeNav()"></div>
+
+<!-- Mobile nav drawer -->
+<div class="nav-drawer" id="navDrawer">
+  <a href="#usluge" onclick="closeNav()">Usluge</a>
+  <a href="#rezervacija" onclick="closeNav()">Rezervacija</a>
+  <a href="#kontakt" onclick="closeNav()">Kontakt</a>
+  <a href="#rezervacija" class="nav-cta" onclick="closeNav()">✦ Rezerviraj termin</a>
+</div>
+
 <nav id="nav">
   <a href="#" class="logo">Beauty <em>Mess</em></a>
   <ul class="nav-links">
@@ -309,6 +436,9 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:2.5rem 3r
     <li><a href="#kontakt">Kontakt</a></li>
     <li><a href="#rezervacija" class="nav-cta">✦ Rezerviraj termin</a></li>
   </ul>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleNav()" aria-label="Izbornik">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- HERO -->
@@ -788,6 +918,27 @@ async function deleteAppt(id,date,time){
 }
 
 // Keyboard shortcut: konami-style triple press admin (long press on admin trigger = same as click)
+
+// ═══════════════════════════════════
+// MOBILE NAV
+// ═══════════════════════════════════
+function toggleNav(){
+  const h=document.getElementById('hamburger');
+  const d=document.getElementById('navDrawer');
+  const o=document.getElementById('navOverlay');
+  h.classList.toggle('open');
+  d.classList.toggle('open');
+  o.classList.toggle('show');
+  document.body.style.overflow=d.classList.contains('open')?'hidden':'';
+}
+function closeNav(){
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('navDrawer').classList.remove('open');
+  document.getElementById('navOverlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+// Close on resize to desktop
+window.addEventListener('resize',()=>{if(window.innerWidth>=768)closeNav()});
 </script>
 </body>
 </html>
